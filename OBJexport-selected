@@ -1,0 +1,26 @@
+#objExportSelctions.py
+#Choose directory and export all selected objects as OBJ with the name of that shape.
+
+import maya.cmds as cmds
+import os.path
+import maya.mel as mel
+
+'''Extra features'''
+#delete history 
+mel.eval('doBakeNonDefHistory( 1, {"prePost" });')
+#make sure obj plugin is included
+cmds.loadPlugin('objExport')
+
+'''Export selection'''
+#list selections
+shapeName = cmds.ls (sl = True)
+listSize = len(shapeName)
+
+#Where to place the files
+outputDir = cmds.fileDialog2(fileMode=2, caption="Import Image")
+
+#take all selections and export as obj with outliner name
+for i in range(listSize):
+    cmds.select(shapeName[i])
+    path = os.path.join(outputDir[0], str(shapeName[i]) + '.obj')
+    cmds.file(path,pr= True,typ="OBJexport",es= True ,op="groups=0; ptgroups=0;materials=0; smoothing=0; normals=0")
