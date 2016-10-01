@@ -1,0 +1,78 @@
+#fbxExportSelctions.py
+#last change 09-28-2016
+
+
+#Check if scene is in meters for consistent size.
+#Choose directory and export all selected objects as fbx with the name of that shape.
+
+
+
+import maya.cmds as cmds
+import os.path
+import maya.mel as mel
+
+
+
+'''Extra features'''
+
+#TBC
+
+
+
+
+
+if cmds.currentUnit (q=True, linear=True) == "m":
+
+    
+
+    '''Export selection'''
+
+    #list selections
+
+    shapeName = cmds.ls (sl = True)
+
+    listSize = len(shapeName)
+
+    
+
+    #Where to place the files
+
+    outputDir = cmds.fileDialog2(fileMode=2, caption="File location")
+
+    mel.eval("FBXExportSmoothMesh -v true")
+
+    #mel.eval('FBXConvertUnitString "cm"')
+
+    mel.eval("FBXExportReferencedAssetsContent -v true")
+
+    mel.eval("FBXExportEmbeddedTextures -v false")
+
+    mel.eval("FBXExportTangents -v true")
+
+    mel.eval("FBXExportTriangulate -v true")
+    
+    mel.eval("FBXExportFileVersion -v FBX201400")
+
+    mel.eval("FBXExportAnimationOnly -v false")
+
+    
+
+    #take all selections and export as obj with outliner name
+
+    for i in range(listSize):
+
+        cmds.select(shapeName[i])
+
+        cmds.delete(ch=True)
+
+        cmds.makeIdentity (apply=True,t=True,r=True,s=True,n=False,pn=True)
+
+        path = os.path.join(outputDir[0], str(shapeName[i]) + '.fbx')
+
+        cmds.file(path,exportSelected = True,typ="FBX export")
+
+
+
+else:
+
+    print "Set the units of the scene to meter before running the export",
