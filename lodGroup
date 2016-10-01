@@ -1,0 +1,36 @@
+#lodGroup.py
+'''
+All selected objects will be movied to (0,0,0) when the script runs.
+Select lod0 first and then up to LOD them in the right order.
+'''
+import maya.cmds as cmds
+
+#selected objects
+selection = cmds.ls(sl=True)
+cmds.makeIdentity (apply=True,t=True,r=True,s=True,n=False,pn=True)
+cmds.delete(ch=True)
+#give back translate data on selected
+for item in selection:
+            
+    cmds.makeIdentity(item, apply=True, t=True, r=True, s=True, n=False, pn=True)
+    
+    objRotatePivot = cmds.xform(item, rp=True, query=True)
+    
+    cmds.setAttr(item+'.translateX', -objRotatePivot[0])
+    cmds.setAttr(item+'.translateY', -objRotatePivot[1])
+    cmds.setAttr(item+'.translateZ', -objRotatePivot[2])
+    
+    cmds.makeIdentity(item, apply=True, t=True, r=True, s=True, n=False, pn=True)
+    
+    cmds.setAttr(item+'.translateX', objRotatePivot[0])
+    cmds.setAttr(item+'.translateY', objRotatePivot[1])
+    cmds.setAttr(item+'.translateZ', objRotatePivot[2])
+
+#snapMode engaged
+cmds.snapMode(grid=True) 
+#move all dirextions to 0.0.0
+cmds.move (0, 0, 0, selection, a=True)
+
+
+#create lod group.
+cmds.LevelOfDetailGroup()
