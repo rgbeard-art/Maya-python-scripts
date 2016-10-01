@@ -1,4 +1,4 @@
-#objExportSelction.py
+#objExportSelctions.py
 #Choose directory and export all selected objects as OBJ with the name of that shape.
 
 import maya.cmds as cmds
