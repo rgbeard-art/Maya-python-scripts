@@ -1,23 +1,15 @@
 #fbxExportSelctions.py
+#Created by Alexander Samuelsson 
+#redgreenbeard@gmail.com for questions
 
 #last change 10-31-2016
             
 #Choose directory and export all selected objects as fbx with the name of that shape.
-
-
-
 import maya.cmds as cmds
-
 import os.path
-
 import maya.mel as mel
 
-
-
-'''Extra features'''
-#Things I want to add.
-
-
+#We whant that every one in the team uses meter while working for consistency
 if cmds.currentUnit (q=True, linear=True) == "m":
     
     
@@ -41,7 +33,9 @@ if cmds.currentUnit (q=True, linear=True) == "m":
     #Where to place the files
 
     outputDir = cmds.fileDialog2(fileMode=2, caption="File location")
-
+    
+    #All checkboxes for export
+    
     mel.eval("FBXExportSmoothMesh -v true")
 
     mel.eval('FBXExportConvertUnitString "m"')
@@ -60,7 +54,7 @@ if cmds.currentUnit (q=True, linear=True) == "m":
 
     
 
-    #take all selections and export as obj with outliner name
+    #take all selections and export as fbx with outliner name
     if allInOne == 'No':
         for i in range(listSize):
     
@@ -73,7 +67,9 @@ if cmds.currentUnit (q=True, linear=True) == "m":
             path = os.path.join(outputDir[0], str(shapeName[i]) + '.fbx')
     
             cmds.file(path,exportSelected = True,typ="FBX export")
-
+    
+    #export separate fbx with shapeName 0 as name.
+    
     else:
         
         cmds.select(shapeName[i])
