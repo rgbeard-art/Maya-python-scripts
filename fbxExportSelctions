@@ -1,29 +1,32 @@
 #fbxExportSelctions.py
-#last change 09-28-2016
 
-
-#Check if scene is in meters for consistent size.
+#last change 10-31-2016
+            
 #Choose directory and export all selected objects as fbx with the name of that shape.
 
 
 
 import maya.cmds as cmds
+
 import os.path
+
 import maya.mel as mel
 
 
 
 '''Extra features'''
-
-#TBC
-
-
-
+#Things I want to add.
 
 
 if cmds.currentUnit (q=True, linear=True) == "m":
-
     
+    
+    #check if you want to export as one fbx or all as separate
+    
+    allInOne = cmds.confirmDialog( title='FBX export selection', message='All In One will export all selected shapes with the name of the first selection.'
+    '\nSeparate will export alla selected shapes with there individual shape names. \n'
+    'After this choose location and save.',
+    button=['All In One','Separate'], defaultButton='Yes', cancelButton='No', dismissString='Exit' )  
 
     '''Export selection'''
 
@@ -41,8 +44,8 @@ if cmds.currentUnit (q=True, linear=True) == "m":
 
     mel.eval("FBXExportSmoothMesh -v true")
 
-    #mel.eval('FBXConvertUnitString "cm"')
-
+    mel.eval('FBXExportConvertUnitString "m"')
+    
     mel.eval("FBXExportReferencedAssetsContent -v true")
 
     mel.eval("FBXExportEmbeddedTextures -v false")
@@ -50,7 +53,7 @@ if cmds.currentUnit (q=True, linear=True) == "m":
     mel.eval("FBXExportTangents -v true")
 
     mel.eval("FBXExportTriangulate -v true")
-    
+
     mel.eval("FBXExportFileVersion -v FBX201400")
 
     mel.eval("FBXExportAnimationOnly -v false")
@@ -58,20 +61,30 @@ if cmds.currentUnit (q=True, linear=True) == "m":
     
 
     #take all selections and export as obj with outliner name
+    if allInOne == 'No':
+        for i in range(listSize):
+    
+            cmds.select(shapeName)
+    
+            cmds.delete(ch=True)
+    
+            cmds.makeIdentity (apply=True,t=True,r=True,s=True,n=False,pn=True)
+    
+            path = os.path.join(outputDir[0], str(shapeName[i]) + '.fbx')
+    
+            cmds.file(path,exportSelected = True,typ="FBX export")
 
-    for i in range(listSize):
-
+    else:
+        
         cmds.select(shapeName[i])
-
+    
         cmds.delete(ch=True)
 
         cmds.makeIdentity (apply=True,t=True,r=True,s=True,n=False,pn=True)
 
-        path = os.path.join(outputDir[0], str(shapeName[i]) + '.fbx')
+        path = os.path.join(outputDir[0], str(shapeName[0]) + '.fbx')
 
         cmds.file(path,exportSelected = True,typ="FBX export")
-
-
 
 else:
 
