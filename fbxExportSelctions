@@ -2,7 +2,7 @@
 #Created by Alexander Samuelsson 
 #redgreenbeard@gmail.com for questions
 
-#last change 10-31-2016
+#last change 11-1-2016
             
 #Choose directory and export all selected objects as fbx with the name of that shape.
 import maya.cmds as cmds
@@ -18,10 +18,9 @@ if cmds.currentUnit (q=True, linear=True) == "m":
     allInOne = cmds.confirmDialog( title='FBX export selection', message='All In One will export all selected shapes with the name of the first selection.'
     '\nSeparate will export alla selected shapes with there individual shape names. \n'
     'After this choose location and save.',
-    button=['All In One','Separate'], defaultButton='Yes', cancelButton='No', dismissString='Exit' )  
+    button=['All In One','Separate'], defaultButton='Yes', cancelButton='No', dismissString='No', )  
 
     '''Export selection'''
-
     #list selections
 
     shapeName = cmds.ls (sl = True)
@@ -55,10 +54,26 @@ if cmds.currentUnit (q=True, linear=True) == "m":
     
 
     #take all selections and export as fbx with outliner name
-    if allInOne == 'No':
+    if allInOne == 'All In One':
+        
+        cmds.select(shapeName)
+    
+        cmds.delete(ch=True)
+
+        cmds.makeIdentity (apply=True,t=True,r=True,s=True,n=False,pn=True)
+
+        path = os.path.join(outputDir[0], str(shapeName[0]) + '.fbx')
+
+        cmds.file(path,exportSelected = True,typ="FBX export")
+        
+        
+    #export separate fbx with shapeName 0 as name.
+    
+    elif allInOne == 'Separate':
+        
         for i in range(listSize):
     
-            cmds.select(shapeName)
+            cmds.select(shapeName[i])
     
             cmds.delete(ch=True)
     
@@ -68,20 +83,6 @@ if cmds.currentUnit (q=True, linear=True) == "m":
     
             cmds.file(path,exportSelected = True,typ="FBX export")
     
-    #export separate fbx with shapeName 0 as name.
-    
-    else:
-        
-        cmds.select(shapeName[i])
-    
-        cmds.delete(ch=True)
-
-        cmds.makeIdentity (apply=True,t=True,r=True,s=True,n=False,pn=True)
-
-        path = os.path.join(outputDir[0], str(shapeName[0]) + '.fbx')
-
-        cmds.file(path,exportSelected = True,typ="FBX export")
-
 else:
 
     print "Set the units of the scene to meter before running the export",
