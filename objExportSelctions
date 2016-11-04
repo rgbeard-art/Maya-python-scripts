@@ -1,26 +1,63 @@
 #objExportSelctions.py
-#Choose directory and export all selected objects as OBJ with the name of that shape.
+#Created by Alexander Samuelsson 
+#redgreenbeard@gmail.com for questions
 
+#last change 11-4-2016
+            
+#Choose directory and export all selected objects as fbx with the name of that shape.
 import maya.cmds as cmds
 import os.path
 import maya.mel as mel
 
-'''Extra features'''
-#delete history 
-mel.eval('doBakeNonDefHistory( 1, {"prePost" });')
-#make sure obj plugin is included
-cmds.loadPlugin('objExport')
+    
+    
+
+
+allInOne = cmds.confirmDialog( title='OBJ export selection', message='All In One will export all selected shapes with the name of the first selection.'
+'\nSeparate will export alla selected shapes with there individual shape names. \n'
+'After this choose location and save.',
+button=['All In One','Separate'], defaultButton='Yes', cancelButton='No', dismissString='No', )  
 
 '''Export selection'''
 #list selections
+
 shapeName = cmds.ls (sl = True)
+
 listSize = len(shapeName)
 
-#Where to place the files
-outputDir = cmds.fileDialog2(fileMode=2, caption="Import Image")
+    
 
-#take all selections and export as obj with outliner name
-for i in range(listSize):
-    cmds.select(shapeName[i])
-    path = os.path.join(outputDir[0], str(shapeName[i]) + '.obj')
-    cmds.file(path,pr= True,typ="OBJexport",es= True ,op="groups=0; ptgroups=0;materials=0; smoothing=0; normals=0")
+#Where to place the files
+outputDir = cmds.fileDialog2(fileMode=2, caption="File location")
+
+    
+
+#take all selections and export as fbx with outliner name
+if allInOne == 'All In One':
+        
+    cmds.select(shapeName)
+
+    cmds.delete(ch=True)
+
+    cmds.makeIdentity (apply=True,t=True,r=True,s=True,n=False,pn=True)
+
+    path = os.path.join(outputDir[0], str(shapeName[0]) + '.obj')
+
+    cmds.file(path,exportSelected = True,typ="OBJexport")
+        
+        
+    #export separate fbx with shapeName 0 as name.
+    
+elif allInOne == 'Separate':
+        
+    for i in range(listSize):
+
+        cmds.select(shapeName[i])
+    
+        cmds.delete(ch=True)
+
+        cmds.makeIdentity (apply=True,t=True,r=True,s=True,n=False,pn=True)
+    
+        path = os.path.join(outputDir[0], str(shapeName[i]) + '.obj')
+    
+        cmds.file(path,exportSelected = True,typ="OBJexport")
