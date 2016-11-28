@@ -37,7 +37,7 @@ if cmds.currentUnit (q=True, linear=True) == "m":
     
     mel.eval("FBXExportSmoothMesh -v true")
 
-    mel.eval('FBXExportConvertUnitString "m"')
+    mel.eval('FBXExportConvertUnitString "cm"')
     
     mel.eval("FBXExportReferencedAssetsContent -v true")
 
