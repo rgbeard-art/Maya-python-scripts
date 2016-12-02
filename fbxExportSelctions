@@ -2,7 +2,7 @@
 #Created by Alexander Samuelsson 
 #redgreenbeard@gmail.com for questions
 
-#last change 11-1-2016
+#last change 12-02-2016
             
 #Choose directory and export all selected objects as fbx with the name of that shape.
 import maya.cmds as cmds
