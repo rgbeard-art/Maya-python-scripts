@@ -35,6 +35,8 @@ if cmds.currentUnit (q=True, linear=True) == "m":
     
     #All checkboxes for export
     
+    mel.eval("FBXExportInAscii -v true")
+    
     mel.eval("FBXExportSmoothMesh -v true")
 
     mel.eval('FBXExportConvertUnitString "cm"')
