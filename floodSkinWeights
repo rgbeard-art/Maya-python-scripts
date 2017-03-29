@@ -1,0 +1,66 @@
+#floodSkinWeightToJoint.py
+#Written by Alexander Samuelsson 05-09-2016
+#updated 03-29-2017 
+
+
+'''
+This script help you flood skin weights to joints fast.
+Shift select all faces then joints that you want to have the
+same influence.
+Run script and flood.
+ 
+                                                              '''
+import maya.cmds as cmds
+
+geometry = cmds.ls(sl=True,st=True)
+listLen = len(geometry)
+
+joints = []
+transform = []
+Flooder = cmds.confirmDialog( title='Flood', message='Do you want to flood with white or black?',
+button = ['White','Black'], defaultButton='Yes', cancelButton='No', dismissString='No', )  
+
+#split selection into meshes and joints.
+for i in range(listLen):
+  if geometry[i] == 'transform':
+      transform.append(str(geometry[i-1]))
+  elif geometry[i] == 'joint':
+      joints.append(str(geometry[i-1]))
+  else:
+      print geometry[i]
+
+#Select all verts in mesh selection
+for item in transform:
+    vtxCount = cmds.polyEvaluate(v=True)
+    cmds.select(cl=True)
+    cmds.select(item+'.vtx[0:'+str(vtxCount)+']', add=True)  
+
+
+#activate skintool
+#This could probobly look better.
+skinPaintTool = 'artAttrSkinContext'
+if not cmds.artAttrSkinPaintCtx(skinPaintTool,ex=True):
+    cmds.artAttrSkinPaintCtx(skinPaintTool,i1='paintSkinWeights.xpm',whichTool='skinWeights')
+
+cmds.setToolTo(skinPaintTool)
+
+#val = 1 for full influence 
+#Val = 0 you need to change 'addative' to 'absolute' 
+if Flooder == 'White':
+    
+    cmds.artAttrSkinPaintCtx(skinPaintTool,edit=True,sao='additive',val=1)
+    cmds.artAttrSkinPaintCtx(skinPaintTool, e=True, clear=True)
+elif Flooder == 'Black':
+    cmds.artAttrSkinPaintCtx(skinPaintTool,edit=True,sao='absolute',val=0)
+    cmds.artAttrSkinPaintCtx(skinPaintTool, e=True, clear=True)    
+    
+else:
+    print 'Exit',
+        
+
+    
+
+
+
+
+    
