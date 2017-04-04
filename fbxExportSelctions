@@ -2,89 +2,86 @@
 #Created by Alexander Samuelsson 
 #redgreenbeard@gmail.com for questions
 
-#last change 12-02-2016
+#last change 04-04-2017
             
 #Choose directory and export all selected objects as fbx with the name of that shape.
 import maya.cmds as cmds
 import os.path
 import maya.mel as mel
 
-#We whant that every one in the team uses meter while working for consistency
-if cmds.currentUnit (q=True, linear=True) == "m":
-    
-    
-    #check if you want to export as one fbx or all as separate
-    
-    allInOne = cmds.confirmDialog( title='FBX export selection', message='All In One will export all selected shapes with the name of the first selection.'
-    '\nSeparate will export alla selected shapes with there individual shape names. \n'
-    'After this choose location and save.',
-    button=['All In One','Separate'], defaultButton='Yes', cancelButton='No', dismissString='No', )  
-
-    '''Export selection'''
-    #list selections
-
-    shapeName = cmds.ls (sl = True)
-
-    listSize = len(shapeName)
 
     
-
-    #Where to place the files
-
-    outputDir = cmds.fileDialog2(fileMode=2, caption="File location")
     
-    #All checkboxes for export
+#check if you want to export as one fbx or all as separate
+
+allInOne = cmds.confirmDialog( title='FBX export selection', message='All In One will export all selected shapes with the name of the first selection.'
+'\nSeparate will export alla selected shapes with there individual shape names. \n'
+'After this choose location and save.',
+button=['All In One','Separate'], defaultButton='Yes', cancelButton='No', dismissString='No', )  
+
+'''Export selection'''
+#list selections
+
+shapeName = cmds.ls (sl = True)
+
+listSize = len(shapeName)
+
+
+
+#Where to place the files
+
+outputDir = cmds.fileDialog2(fileMode=2, caption="File location")
+
+#All checkboxes for export
+
+mel.eval("FBXExportInAscii -v true")
+
+mel.eval("FBXExportSmoothMesh -v true")
+
+mel.eval('FBXExportConvertUnitString "cm"')
+
+mel.eval("FBXExportReferencedAssetsContent -v true")
+
+mel.eval("FBXExportEmbeddedTextures -v false")
+
+mel.eval("FBXExportTangents -v true")
+
+mel.eval("FBXExportTriangulate -v true")
+
+mel.eval("FBXExportFileVersion -v FBX201400")
+
+mel.eval("FBXExportAnimationOnly -v false")
+
+
+
+#take all selections and export as fbx with outliner name
+if allInOne == 'All In One':
+
+    cmds.select(shapeName)
     
-    mel.eval("FBXExportInAscii -v true")
+    cmds.delete(ch=True)
     
-    mel.eval("FBXExportSmoothMesh -v true")
-
-    mel.eval('FBXExportConvertUnitString "cm"')
+    cmds.makeIdentity (apply=True,t=True,r=True,s=True,n=False,pn=True)
     
-    mel.eval("FBXExportReferencedAssetsContent -v true")
-
-    mel.eval("FBXExportEmbeddedTextures -v false")
-
-    mel.eval("FBXExportTangents -v true")
-
-    mel.eval("FBXExportTriangulate -v true")
-
-    mel.eval("FBXExportFileVersion -v FBX201400")
-
-    mel.eval("FBXExportAnimationOnly -v false")
-
+    path = os.path.join(outputDir[0], str(shapeName[0]) + '.fbx')
     
+    cmds.file(path,exportSelected = True,typ="FBX export")
 
-    #take all selections and export as fbx with outliner name
-    if allInOne == 'All In One':
+
+#export separate fbx with shapeName 0 as name.
+
+elif allInOne == 'Separate':
+
+    for i in range(listSize):
+    
+        cmds.select(shapeName[i])
         
-        cmds.select(shapeName)
-    
         cmds.delete(ch=True)
-
+        
         cmds.makeIdentity (apply=True,t=True,r=True,s=True,n=False,pn=True)
-
-        path = os.path.join(outputDir[0], str(shapeName[0]) + '.fbx')
-
+        
+        path = os.path.join(outputDir[0], str(shapeName[i]) + '.fbx')
+        
         cmds.file(path,exportSelected = True,typ="FBX export")
-        
-        
-    #export separate fbx with shapeName 0 as name.
     
-    elif allInOne == 'Separate':
-        
-        for i in range(listSize):
-    
-            cmds.select(shapeName[i])
-    
-            cmds.delete(ch=True)
-    
-            cmds.makeIdentity (apply=True,t=True,r=True,s=True,n=False,pn=True)
-    
-            path = os.path.join(outputDir[0], str(shapeName[i]) + '.fbx')
-    
-            cmds.file(path,exportSelected = True,typ="FBX export")
-    
-else:
-
-    print "Set the units of the scene to meter before running the export",
+print 'Exported to ' + str(outputDir),
