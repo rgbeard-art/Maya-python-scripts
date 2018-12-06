@@ -1,7 +1,7 @@
 # Maya-python-scripts
 Hi!
 
-I am a game art student that wants to learn more about scripting and shader programming.
+I want to find a nice balance between art and code.
 
 In this repo there will be some:
 -Different types of helpfull workflow scripts. 
